@@ -5,9 +5,10 @@
     <td>
         <input type="text" name="taxonomy_image" id="taxonomy_image"
                value="<?php echo $img = get_option('taxonomy_image_' . $taxonomy->term_id) ?>"/>
-
-			<?php if ($img) { ?>
-        <img src="<?php echo $img?>" alt="Taxonomy image"/>
-			<?php }?>
+        <div id="taxonomy_image_preview">
+					<?php if ($img) { ?>
+            <img src="<?php echo $img?>" alt="Taxonomy image"/>
+					<?php }?>
+        </div>
     </td>
 </tr>

@@ -1,13 +1,47 @@
 <script type="text/javascript">
-    jQuery(document).ready(function () {
-        jQuery("#taxonomy_image").click(function () {
-            tb_show("", "media-upload.php?type=image&amp;TB_iframe=true");
-            return false;
+    // @see http://wordpress.stackexchange.com/questions/78547/display-media-uploader-in-own-plugin-on-wordpress-3-5
+    // @see http://mikejolley.com/2012/12/using-the-new-wordpress-3-5-media-uploader-in-plugins/
+    (function ($) {
+
+        var taxonomyImageFrame;
+
+        // smazani uzivatelske fotky
+        $('#omDeleteUserPhoto').live('click', function (event) {
+            $("#omTaxonomyImage").val('');
+            $("#omTaxonomyImagePreview").innerHTML('');
+            $("#omUserPhotoWarningMessage").show();
+            $(this).hide()
         });
-        window.send_to_editor = function (html) {
-            imgurl = jQuery("img", html).attr("src");
-            jQuery("#taxonomy_image").val(imgurl);
-            tb_remove();
-        }
-    });
+
+        // kliknuti na tlacitko vybrani uzivatele
+        $('#taxonomy_image').live('click', function (event) {
+
+            event.preventDefault();
+
+            if (authorPhotoFileFrame) {
+                authorPhotoFileFrame.open();
+                return;
+            }
+
+            taxonomyImageFrame = wp.media.frames.file_frame = wp.media({
+                title: 'Vyberte fotografii uživatele',
+                button: {
+                    text: 'Vybrat'
+                },
+                multiple: false
+            });
+
+            taxonomyImageFrame.on('select', function () {
+                attachment = authorPhotoFileFrame.state().get('selection').first().toJSON();
+                $("#omUserPhoto").val(attachment.id);
+                $("#omUserPhotoPreview img").attr("src", attachment.url);
+                $("#omDeleteUserPhoto").show();
+                $("#omUserPhotoWarningMessage").show();
+            });
+
+            taxonomyImageFrame.open();
+        });
+
+    })(jQuery);
+
 </script>

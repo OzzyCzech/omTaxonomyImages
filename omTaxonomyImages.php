@@ -27,23 +27,14 @@ class omTaxonomyImages {
 			foreach ($taxonomies as $taxonomy) {
 				if ($taxonomy === 'nav_menu') continue;
 				add_action($taxonomy . '_add_form_fields', array($this, 'add_taxonomy_field'));
-				add_action($taxonomy . '_edit_form_fields', array($this, 'edit_taxonomy_field'));
+				add_action($taxonomy . '_edit_form_fields', array($this, 'add_taxonomy_field'));
 			}
 		}
 	}
 
 	public function add_taxonomy_field() {
-		wp_enqueue_style('thickbox');
-		wp_enqueue_script('thickbox');
-		require __DIR__ . '/templates/add_taxonomy_field.phtml';
-		require __DIR__ . '/templates/script.phtml';
-	}
-
-	public function edit_taxonomy_field($taxonomy) {
-		wp_enqueue_style('thickbox');
-		wp_enqueue_script('thickbox');
-		require __DIR__ . '/templates/edit_taxonomy_field.phtml';
-		require __DIR__ . '/templates/script.phtml';
+		wp_enqueue_media();
+		require __DIR__ . '/omTaxonomyImages.phtml';
 	}
 
 	public function save_taxonomy_image($term_id) {
@@ -52,7 +43,11 @@ class omTaxonomyImages {
 		}
 	}
 
-	public static function getImageUrl($term_id = null) {
+	public static function getTaxonomyImage($term_id) {
+		return get_option('taxonomy_image_' . $term_id);
+	}
+
+	public static function getImageUrl($term_id = null, $default = null) {
 		if (!$term_id) {
 			if (is_category())
 				$term_id = get_query_var('cat');
@@ -61,7 +56,7 @@ class omTaxonomyImages {
 				$term_id = $current_term->term_id;
 			}
 		}
-		return get_option('taxonomy_image_' . $term_id);
+		return get_option('taxonomy_image_' . $term_id) ? : $default;
 	}
 
 }

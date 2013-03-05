@@ -1,0 +1,95 @@
+<? $image = omTaxonomyImages::getTaxonomyImage($GLOBALS['tag_ID']); ?>
+
+<style type="text/css">
+    #omTaxonomyImageWarningMessage {
+        background: #c00;
+        color: #fff;
+        padding: 5px 8px;
+        display: none;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    #omTaxonomyImagePreview img {
+        max-width: 50%;
+        padding: 5px 0;
+    }
+
+    #omTaxonomyImageDeleteButton {
+		<?= ($image) ? null : ' display:none;'?>
+    }
+</style>
+
+<table class="form-table">
+    <tbody>
+    <tr>
+        <th><label for="omTaxonomyImage"><?_e('Image')?></label></th>
+        <td>
+            <input type="hidden" name="taxonomy_image" id="omTaxonomyImage" value="<?= $image ?>"/>
+            <button type="button" class="button" id="omImageSelectButton"><? _e('Select')?></button>
+            <button type="button" class="button" id="omTaxonomyImageDeleteButton"> <? _e('Delete') ?></button>
+            <span id="omTaxonomyImageWarningMessage">Nezapomeňte změny uložit!!!</span>
+
+            <div id="omTaxonomyImagePreview">
+							<?php
+							if ($image) {
+								echo sprintf('<img src="%s" />', omTaxonomyImages::getImageUrl($GLOBALS['tag_ID']));
+							} else {
+								echo '<img src="' . includes_url() . 'images/blank.gif" alt="" />';
+							}
+							?>
+            </div>
+
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    // @see http://wordpress.stackexchange.com/questions/78547/display-media-uploader-in-own-plugin-on-wordpress-3-5
+    // @see http://mikejolley.com/2012/12/using-the-new-wordpress-3-5-media-uploader-in-plugins/
+    (function ($) {
+
+        var omTaxonomyImageFrame;
+
+        // smazani uzivatelske fotky
+        $('#omTaxonomyImageDeleteButton').live('click', function (event) {
+            $("#omTaxonomyImage").val('');
+            $("#omTaxonomyImagePreview img").attr("src", "<?php echo includes_url() . 'images/blank.gif';?>");
+            $("#omTaxonomyImageWarningMessage").show();
+            $(this).hide()
+        });
+
+        // kliknuti na tlacitko vybrani uzivatele
+        $('#omImageSelectButton').live('click', function (event) {
+
+            event.preventDefault();
+
+            if (omTaxonomyImageFrame) {
+                omTaxonomyImageFrame.open();
+                return;
+            }
+
+            omTaxonomyImageFrame = wp.media.frames.file_frame = wp.media({
+                title: '<? _e('Manage Images')?>',
+                button: {
+                    text: '<?_e('Select')?>'
+                },
+                multiple: false
+            });
+
+            omTaxonomyImageFrame.on('select', function () {
+                attachment = omTaxonomyImageFrame.state().get('selection').first().toJSON();
+                $("#omTaxonomyImage").val(attachment.url);
+                $("#omTaxonomyImagePreview img").attr("src", attachment.url);
+                $("#omTaxonomyImageDeleteButton").show();
+                $("#omTaxonomyImageWarningMessage").show();
+            });
+
+            omTaxonomyImageFrame.open();
+        });
+
+    })(jQuery);
+
+</script>
