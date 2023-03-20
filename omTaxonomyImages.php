@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: omTaxonomyImages
-Plugin URI: http://www.omdesign.cz
+Plugin URI: https://ozana.cz
 Description: Obrazky kategorii
 Author: Roman Ožana
 Version: 1.0
-Author URI: http://www.omdesign.cz
+Author URI: https://ozana.cz
 */
 
 class omTaxonomyImages {
